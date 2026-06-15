@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rainy Night Playlist</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+:root{
+--glass:rgba(255,255,255,.06);
+--border:rgba(255,255,255,.08);
+--text:#ffffff;
+--sub:#9ca3af;
+--blue:#2563eb;
+}
+
+body{
+background:#000;
+overflow:hidden;
+color:var(--text);
+}
+
+/* VIDEO */
+
+.bg-video{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-5;
+filter:brightness(.35);
+}
+
+/* OVERLAY */
+
+.overlay{
+position:fixed;
+inset:0;
+background:
+linear-gradient(
+180deg,
+rgba(0,0,0,.45),
+rgba(0,0,0,.8)
+);
+z-index:-4;
+}
+
+/* LIGHTS */
+
+.light{
+position:fixed;
+border-radius:50%;
+filter:blur(180px);
+pointer-events:none;
+}
+
+.blue{
+width:700px;
+height:700px;
+background:#2563eb;
+left:-250px;
+top:0;
+opacity:.25;
+animation:float1 12s infinite ease-in-out;
+}
+
+.purple{
+width:600px;
+height:600px;
+background:#7c3aed;
+right:-200px;
+bottom:-150px;
+opacity:.18;
+animation:float2 15s infinite ease-in-out;
+}
+
+/* FOG */
+
+.fog{
+position:fixed;
+width:250%;
+height:250%;
+filter:blur(120px);
+background:
+radial-gradient(
+rgba(255,255,255,.03),
+transparent 70%
+);
+pointer-events:none;
+}
+
+.fog1{
+animation:fog1 40s linear infinite;
+}
+
+.fog2{
+animation:fog2 50s linear infinite;
+}
+
+/* RAIN */
+
+.rain{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:-1;
+}
+
+.drop{
+position:absolute;
+width:2px;
+height:120px;
+background:
+linear-gradient(
+transparent,
+rgba(255,255,255,.4)
+);
+}
+
+/* LAYOUT */
+
+.app{
+display:grid;
+grid-template-columns:280px 1fr;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+padding:30px;
+background:rgba(0,0,0,.25);
+backdrop-filter:blur(25px);
+border-right:1px solid var(--border);
+}
+
+.logo{
+font-size:28px;
+font-weight:800;
+margin-bottom:40px;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.menu a{
+color:#cbd5e1;
+text-decoration:none;
+transition:.3s;
+}
+
+.menu a:hover{
+color:white;
+padding-left:10px;
+}
+
+/* MAIN */
+
+.main{
+padding:40px;
+overflow-y:auto;
+padding-bottom:150px;
+}
+
+.hero{
+display:flex;
+gap:30px;
+align-items:center;
+}
+
+.cover{
+width:260px;
+height:260px;
+border-radius:28px;
+overflow:hidden;
+
+box-shadow:
+0 0 40px rgba(37,99,235,.2),
+0 0 100px rgba(37,99,235,.1);
+}
+
+.cover img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.info h1{
+font-size:4rem;
+font-weight:800;
+}
+
+.info p{
+color:var(--sub);
+margin-top:12px;
+font-size:1.1rem;
+}
+
+/* PLAYLIST */
+
+.playlist{
+margin-top:50px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.song{
+padding:18px 22px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+background:var(--glass);
+
+border:1px solid var(--border);
+
+backdrop-filter:blur(25px);
+
+border-radius:18px;
+
+cursor:pointer;
+
+transition:.3s;
+}
+
+.song:hover{
+transform:translateX(8px);
+background:rgba(255,255,255,.09);
+}
+
+.song.active{
+border:1px solid #2563eb;
+
+box-shadow:
+0 0 20px rgba(37,99,235,.3);
+}
+
+.song h3{
+font-size:1rem;
+}
+
+.song p{
+font-size:.9rem;
+color:var(--sub);
+}
+
+/* PLAYER */
+
+.player{
+position:fixed;
+
+left:280px;
+right:0;
+bottom:0;
+
+padding:20px;
+
+background:rgba(0,0,0,.35);
+
+backdrop-filter:blur(30px);
+
+border-top:1px solid var(--border);
+}
+
+.now{
+margin-bottom:10px;
+font-weight:600;
+}
+
+audio{
+width:100%;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.app{
+grid-template-columns:1fr;
+}
+
+.sidebar{
+display:none;
+}
+
+.player{
+left:0;
+}
+
+.hero{
+flex-direction:column;
+text-align:center;
+}
+
+.cover{
+width:220px;
+height:220px;
+}
+
+.info h1{
+font-size:2.5rem;
+}
+
+}
+
+@keyframes float1{
+50%{
+transform:translateY(-60px);
+}
+}
+
+@keyframes float2{
+50%{
+transform:translateY(60px);
+}
+}
+
+@keyframes fog1{
+from{transform:translateX(-20%);}
+to{transform:translateX(20%);}
+}
+
+@keyframes fog2{
+from{transform:translateX(20%);}
+to{transform:translateX(-20%);}
+}
+
+</style>
+</head>
+
+<body>
+
+<video class="bg-video" autoplay muted loop>
+<source src="assets/rain.mp4" type="video/mp4">
+</video>
+
+<div class="overlay"></div>
+
+<div class="light blue"></div>
+<div class="light purple"></div>
+
+<div class="fog fog1"></div>
+<div class="fog fog2"></div>
+
+<div class="rain" id="rain"></div>
+
+<div class="app">
+
+<div class="sidebar">
+
+<div class="logo">
+🌧 Rainy
+</div>
+
+<div class="menu">
+<a href="#">My Playlist</a>
+<a href="#">Favorites</a>
+<a href="#">Recently Played</a>
+<a href="#">Night Drive</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="hero">
+
+<div class="cover">
+<img src="assets/cover.jpg">
+</div>
+
+<div class="info">
+<h1>Rainy Night</h1>
+<p>เพลงสำหรับคืนฝนตกและไฟเมืองที่ไม่เคยหลับ</p>
+</div>
+
+</div>
+
+<div class="playlist" id="playlist"></div>
+
+</div>
+
+</div>
+
+<div class="player">
+
+<div class="now" id="nowPlaying">
+เลือกเพลงเพื่อเริ่มฟัง
+</div>
+
+<audio id="audio" controls></audio>
+
+</div>
+
+<script>
+
+const songs = [
+
+{
+title:"Song One",
+artist:"Artist",
+url:"assets/songs/song1.mp3"
+},
+
+{
+title:"Song Two",
+artist:"Artist",
+url:"assets/songs/song2.mp3"
+},
+
+{
+title:"Song Three",
+artist:"Artist",
+url:"assets/songs/song3.mp3"
+}
+
+];
+
+const playlist=document.getElementById("playlist");
+const audio=document.getElementById("audio");
+const now=document.getElementById("nowPlaying");
+
+songs.forEach(song=>{
+
+const div=document.createElement("div");
+
+div.className="song";
+
+div.innerHTML=`
+<div>
+<h3>${song.title}</h3>
+<p>${song.artist}</p>
+</div>
+<div>▶</div>
+`;
+
+div.onclick=()=>{
+
+document
+.querySelectorAll(".song")
+.forEach(x=>x.classList.remove("active"));
+
+div.classList.add("active");
+
+audio.src=song.url;
+audio.play();
+
+now.innerHTML=
+`🎵 ${song.title} - ${song.artist}`;
+
+};
+
+playlist.appendChild(div);
+
+});
+
+/* Rain */
+
+const rain=document.getElementById("rain");
+
+for(let i=0;i<250;i++){
+
+const drop=document.createElement("div");
+
+drop.className="drop";
+
+drop.style.left=Math.random()*100+"%";
+
+drop.style.top=Math.random()*100+"%";
+
+drop.style.opacity=Math.random();
+
+drop.style.animation=
+`fall ${0.3+Math.random()}s linear infinite`;
+
+rain.appendChild(drop);
+
+}
+
+const style=document.createElement("style");
+
+style.innerHTML=`
+@keyframes fall{
+from{
+transform:translateY(-100px);
+}
+to{
+transform:translateY(100vh);
+}
+}
+`;
+
+document.head.appendChild(style);
+
+</script>
+
+</body>
+</html>
