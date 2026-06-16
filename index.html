@@ -336,7 +336,12 @@ img{display:block;}
             <label class="upload-zone" id="upload-zone" title="อัปโหลดเพลง">
               <span class="upload-icon">🎵</span>
               <span id="upload-label">อัปโหลดเพลง</span>
-              <input type="file" id="file-input" accept="audio/*" multiple/>
+              <input
+  type="file"
+  id="file-input"
+  accept=".mp3,.wav,.aac,.m4a,.flac,.ogg,audio/*"
+  multiple
+/>
             </label>
             <!-- Shuffle -->
             <button class="btn-shuffle" id="btn-shuffle-hero">
@@ -477,30 +482,83 @@ function parseMeta(filename) {
 
 // ─── FILE UPLOAD ───────────────────────────────────────────────
 function handleFiles(files) {
+
   let added = 0;
+
   Array.from(files).forEach(file => {
-    if(!file.type.startsWith('audio/')) return;
+
+    const ext = file.name
+      .split('.')
+      .pop()
+      .toLowerCase();
+
+    const allowed = [
+      'mp3',
+      'wav',
+      'aac',
+      'm4a',
+      'flac',
+      'ogg'
+    ];
+
+    const isAudio =
+      file.type.startsWith('audio/') ||
+      allowed.includes(ext);
+
+    if (!isAudio) return;
+
     const url = URL.createObjectURL(file);
     const meta = parseMeta(file.name);
-    songs.push({ name:file.name, title:meta.title, artist:meta.artist, dur:'—', url, file, durSec:0 });
+
+    songs.push({
+      name: file.name,
+      title: meta.title,
+      artist: meta.artist,
+      dur: '—',
+      url,
+      file,
+      durSec: 0
+    });
+
     added++;
   });
-  if(!added){ toast('ไม่พบไฟล์เสียง — รองรับ MP3, AAC, FLAC, WAV'); return; }
+
+  if (!added) {
+    toast('รองรับ MP3, M4A, AAC, WAV, FLAC, OGG');
+    return;
+  }
+
   rebuildQueue();
   render();
-  // load durations async
-  songs.forEach((s,i) => {
-    if(s.durSec) return;
+
+  songs.forEach((s, i) => {
+
+    if (s.durSec) return;
+
     const tmp = new Audio();
+    tmp.preload = 'metadata';
     tmp.src = s.url;
+
     tmp.addEventListener('loadedmetadata', () => {
+
       songs[i].durSec = tmp.duration;
       songs[i].dur = fmt(tmp.duration);
-      // re-render only dur cell
-      const cell = document.querySelector(`[data-song-idx="${i}"] .tr-dur`);
-      if(cell) cell.textContent = songs[i].dur;
+
+      const cell = document.querySelector(
+        `[data-song-idx="${i}"] .tr-dur`
+      );
+
+      if (cell) {
+        cell.textContent = songs[i].dur;
+      }
     });
+
+    tmp.addEventListener('error', () => {
+      songs[i].dur = 'N/A';
+    });
+
   });
+
   toast(`เพิ่ม ${added} เพลง`);
 }
 
